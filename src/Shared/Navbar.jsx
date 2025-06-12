@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Menu, X } from "lucide-react";
 import { Link, NavLink } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
+import AuthContext from '../Context/AuthContext';
 
 const mobileMenuVariants = {
     hidden: {
@@ -22,10 +24,22 @@ const mobileMenuVariants = {
 };
 
 const Navbar = () => {
+    const { logOutUser, user } = useContext(AuthContext);
+
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(prev => !prev);
-
     const closeMenu = () => setIsOpen(false);
+
+    const handleLogOut = () => {
+        logOutUser()
+            .then(() => {
+                toast.success('Logged out successfully!');
+            })
+            .catch(error => {
+                toast.error('Logout failed. Please try again.');
+                console.log(error);
+            });
+    };
 
     const activeClass = "text-blue-600 border-b-2 border-blue-600";
     const inactiveClass = "text-gray-700 hover:text-blue-600 transition-colors duration-300";
@@ -71,20 +85,48 @@ const Navbar = () => {
                         </NavLink>
                     </div>
 
-                    {/* Auth Buttons */}
-                    <div className="hidden md:flex space-x-2">
-                        <NavLink
-                            to="/login"
-                            className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold shadow-lg hover:from-indigo-600 hover:to-blue-500 transition duration-300"
-                        >
-                            Login
-                        </NavLink>
-                        <NavLink
-                            to="/register"
-                            className="px-5 py-2 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition duration-300"
-                        >
-                            Register
-                        </NavLink>
+                    {/* Auth Buttons (Desktop) */}
+                    <div className="hidden md:flex items-center space-x-4">
+                        {user && (
+                            <>
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    className="ring-primary ring-offset-base-100 w-10 h-10 rounded-full ring-2 ring-offset-2 overflow-hidden"
+                                >
+                                    <img
+                                        src={user.photoURL}
+                                        alt="User Avatar"
+                                        className="w-full h-full object-cover rounded-full"
+                                    />
+                                </motion.div>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={handleLogOut}
+                                    className="cursor-pointer relative rounded px-5 py-2.5 overflow-hidden group bg-blue-700 hover:bg-blue-600 text-white transition-all ease-out duration-300"
+                                >
+                                    <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+                                    <span className="relative">Log Out</span>
+                                </motion.button>
+                            </>
+                        )}
+
+                        {!user && (
+                            <>
+                                <NavLink
+                                    to="/login"
+                                    className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold shadow-lg hover:from-indigo-600 hover:to-blue-500 transition duration-300"
+                                >
+                                    Login
+                                </NavLink>
+                                <NavLink
+                                    to="/register"
+                                    className="px-5 py-2 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition duration-300"
+                                >
+                                    Register
+                                </NavLink>
+                            </>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -133,20 +175,38 @@ const Navbar = () => {
                             Add Course
                         </NavLink>
                         <hr className="border-gray-300" />
-                        <NavLink
-                            to="/login"
-                            className="block w-full text-center text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 rounded-full font-semibold shadow-md hover:from-indigo-600 hover:to-blue-500 transition"
-                            onClick={closeMenu}
-                        >
-                            Login
-                        </NavLink>
-                        <NavLink
-                            to="/register"
-                            className="block w-full text-center border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition"
-                            onClick={closeMenu}
-                        >
-                            Register
-                        </NavLink>
+
+                        {user ? (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => {
+                                    handleLogOut();
+                                    closeMenu();
+                                }}
+                                className="w-full text-center cursor-pointer relative rounded px-5 py-2.5 overflow-hidden group bg-blue-700 hover:bg-blue-600 text-white transition-all ease-out duration-300"
+                            >
+                                <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+                                <span className="relative">Log Out</span>
+                            </motion.button>
+                        ) : (
+                            <>
+                                <NavLink
+                                    to="/login"
+                                    className="block w-full text-center text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 rounded-full font-semibold shadow-md hover:from-indigo-600 hover:to-blue-500 transition"
+                                    onClick={closeMenu}
+                                >
+                                    Login
+                                </NavLink>
+                                <NavLink
+                                    to="/register"
+                                    className="block w-full text-center border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition"
+                                    onClick={closeMenu}
+                                >
+                                    Register
+                                </NavLink>
+                            </>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
