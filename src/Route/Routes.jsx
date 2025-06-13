@@ -6,13 +6,14 @@ import Register from "../Authentications/Register";
 import Login from "../Authentications/Login";
 import Courses from "../Pages/Courses";
 import AddCourses from "../Pages/AddCourses";
+import PrivetRouts from "./PrivateRoutes";
 
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element:<RootLayout></RootLayout>,
-        errorElement:<Error></Error>,
+        element: <RootLayout></RootLayout>,
+        errorElement: <Error></Error>,
         children: [
             {
                 index: true,
@@ -27,12 +28,12 @@ const router = createBrowserRouter([
                 element: <Login></Login>
             },
             {
-                path:'/courses',
-                element:<Courses></Courses>
+                path: '/courses',
+                element: <Courses></Courses>
             },
             {
-                path:'/add-course',
-                element:<AddCourses></AddCourses>
+                path: '/add-course',
+                element: <PrivetRouts><AddCourses></AddCourses></PrivetRouts>
             }
         ]
     }
