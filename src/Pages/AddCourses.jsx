@@ -1,55 +1,24 @@
 import { useContext, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import AuthContext from "../Context/AuthContext";
+import axiosInstance from "../Lib/axios";
+import { motion } from "framer-motion";
+
+const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+        opacity: 1,
+        y: 0,
+        transition: { delay: i * 0.1 },
+    }),
+};
 
 export default function AddCourseForm() {
-  const { user } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    console.log(user);
+    const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    imageUrl: "",
-    duration: "",
-    category: "",
-    price: "",
-    level: "",
-    requirements: "",
-    learnings: "",
-  });
-
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!user) {
-      toast.error("You must be logged in to add a course.");
-      return;
-    }
-
-    const newCourse = {
-      ...form,
-      price: parseFloat(form.price),
-      creatorEmail: user.email,
-      creatorName: user.name || "Anonymous",
-      createdAt: new Date().toISOString(),
-      enrolledStudents: [],
-      isPublished: false,
-    };
-
-    try {
-      const res = await fetch("http://localhost:3000/courses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newCourse),
-      });
-
-      if (!res.ok) throw new Error("Failed to create course");
-
-      toast.success("Course added successfully!");
-      setForm({
+    const [form, setForm] = useState({
         title: "",
         description: "",
         imageUrl: "",
@@ -59,115 +28,167 @@ export default function AddCourseForm() {
         level: "",
         requirements: "",
         learnings: "",
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong.");
-    }
-  };
+    });
 
-  return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow space-y-4">
-      <h2 className="text-2xl font-bold text-center">Add a New Course</h2>
+    const handleChange = (e) => {
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
 
-      <input
-        type="text"
-        name="title"
-        placeholder="Course Title"
-        value={form.title}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded"
-      />
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!user) return toast.error("You must be logged in to add a course.");
 
-      <textarea
-        name="description"
-        placeholder="Short Description"
-        value={form.description}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded"
-      />
+        const newCourse = {
+            ...form,
+            price: parseFloat(form.price),
+            creatorEmail: user.email,
+            creatorName: user.displayName || "Anonymous",
+            createdAt: new Date().toISOString(),
+            enrolledStudents: [],
+            isPublished: false,
+        };
 
-      <input
-        type="text"
-        name="imageUrl"
-        placeholder="Image URL"
-        value={form.imageUrl}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded"
-      />
+        try {
+            setLoading(true);
+            await axiosInstance.post("/courses", newCourse);
+            toast.success("🎉 Course added successfully!");
+            setForm({
+                title: "",
+                description: "",
+                imageUrl: "",
+                duration: "",
+                category: "",
+                price: "",
+                level: "",
+                requirements: "",
+                learnings: "",
+            });
+        } catch (err) {
+            console.error(err);
+            toast.error("❌ Something went wrong.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      <input
-        type="text"
-        name="duration"
-        placeholder="Duration (e.g., 6 weeks)"
-        value={form.duration}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded"
-      />
+    const inputs = [
+        { name: "title", placeholder: "Course Title" },
+        { name: "imageUrl", placeholder: "Image URL" },
+        { name: "duration", placeholder: "Duration (e.g., 6 weeks)" },
+        { name: "price", placeholder: "Course Price (৳)", type: "number" },
+    ];
 
-      <select
-        name="category"
-        value={form.category}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded"
-      >
-        <option value="">Select Category</option>
-        <option value="Web Development">Web Development</option>
-        <option value="Design">Design</option>
-        <option value="Marketing">Marketing</option>
-        <option value="Data Science">Data Science</option>
-      </select>
+    const textareas = [
+        { name: "description", placeholder: "Short Description", rows: 3 },
+        { name: "requirements", placeholder: "Requirements", rows: 2 },
+        { name: "learnings", placeholder: "What You’ll Learn", rows: 2 },
+    ];
 
-      <input
-        type="number"
-        name="price"
-        placeholder="Course Price"
-        value={form.price}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded"
-      />
+    return (
+        <div className="bg-gradient-to-br from-purple-200 via-indigo-100 to-pink-100 py-20 px-4 sm:px-6 relative overflow-hidden">
+            <div className="absolute -top-40 -left-20 w-[600px] h-[600px] bg-pink-300 rounded-full opacity-30 filter blur-3xl z-0 animate-pulse" />
+            <div className="absolute -bottom-40 -right-20 w-[600px] h-[600px] bg-indigo-300 rounded-full opacity-30 filter blur-3xl z-0 animate-pulse" />
 
-      <select
-        name="level"
-        value={form.level}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded"
-      >
-        <option value="">Select Level</option>
-        <option value="Beginner">Beginner</option>
-        <option value="Intermediate">Intermediate</option>
-        <option value="Advanced">Advanced</option>
-      </select>
+            <motion.form
+                onSubmit={handleSubmit}
+                initial="hidden"
+                animate="visible"
+                className="relative z-10 max-w-4xl mx-auto bg-white/60 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-200 space-y-8"
+            >
+                <motion.h2
+                    className="text-3xl sm:text-4xl font-extrabold text-center text-indigo-800"
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    🎓 Add a New Course
+                </motion.h2>
 
-      <textarea
-        name="requirements"
-        placeholder="Requirements"
-        value={form.requirements}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-      />
+                {/* Input Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                    {inputs.map((input, i) => (
+                        <motion.input
+                            key={i}
+                            custom={i}
+                            variants={fadeInUp}
+                            name={input.name}
+                            type={input.type || "text"}
+                            placeholder={input.placeholder}
+                            value={form[input.name]}
+                            onChange={handleChange}
+                            required
+                            whileFocus={{ scale: 1.03 }}
+                            className="input-style border border-slate-300 shadow-md px-4 py-3 rounded-xl bg-white/60 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-300 w-full"
+                        />
+                    ))}
 
-      <textarea
-        name="learnings"
-        placeholder="What You’ll Learn"
-        value={form.learnings}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-      />
+                    <motion.select
+                        name="category"
+                        value={form.category}
+                        onChange={handleChange}
+                        required
+                        custom={inputs.length}
+                        variants={fadeInUp}
+                        className="input-style border border-slate-300 shadow-md px-4 py-3 rounded-xl bg-white/60 backdrop-blur-md w-full"
+                    >
+                        <option value="">Select Category</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Design">Design</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Data Science">Data Science</option>
+                    </motion.select>
 
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-      >
-        Add Course
-      </button>
-    </form>
-  );
+                    <motion.select
+                        name="level"
+                        value={form.level}
+                        onChange={handleChange}
+                        required
+                        custom={inputs.length + 1}
+                        variants={fadeInUp}
+                        className="input-style border border-slate-300 shadow-md px-4 py-3 rounded-xl bg-white/60 backdrop-blur-md w-full"
+                    >
+                        <option value="">Select Level</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </motion.select>
+                </div>
+
+                {/* Textareas */}
+                <div className="grid grid-cols-1 gap-6">
+                    {textareas.map((area, i) => (
+                        <motion.textarea
+                            key={i}
+                            name={area.name}
+                            placeholder={area.placeholder}
+                            value={form[area.name]}
+                            onChange={handleChange}
+                            rows={area.rows}
+                            custom={inputs.length + 2 + i}
+                            variants={fadeInUp}
+                            whileFocus={{ scale: 1.01 }}
+                            className="input-style border border-slate-300 shadow-md px-4 py-3 rounded-xl bg-white/60 backdrop-blur-md w-full"
+                        />
+                    ))}
+                </div>
+
+                {/* Submit Button */}
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
+                    type="submit"
+                    disabled={loading}
+                    custom={inputs.length + textareas.length + 2}
+                    variants={fadeInUp}
+                    className="mt-6 cursor-pointer w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-xl hover:from-pink-500 hover:to-indigo-500 flex items-center justify-center"
+                >
+                    {loading ? (
+                        <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-white mr-2" />
+                    ) : (
+                        "🚀 Add Course"
+                    )}
+                </motion.button>
+            </motion.form>
+        </div>
+    );
 }

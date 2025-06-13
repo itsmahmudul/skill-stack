@@ -123,7 +123,7 @@ const Navbar = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleLogOut}
-                  className="relative rounded-lg px-6 py-2.5 overflow-hidden group font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700"
+                  className="relative cursor-pointer rounded-lg px-6 py-2.5 overflow-hidden group font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700"
                 >
                   <span className="absolute right-0 w-10 h-36 -mt-16 transition-all duration-1000 transform translate-x-14 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease-in-out"></span>
                   <span className="relative">Log Out</span>
@@ -172,6 +172,24 @@ const Navbar = () => {
             className="md:hidden rounded-b-lg px-6 py-6 space-y-5 border-t bg-white/90 backdrop-blur-lg border-gray-300"
             style={{ backdropFilter: "blur(20px)" }}
           >
+            {/* User Avatar and Name */}
+            {user && (
+              <div className="flex items-center space-x-4 mb-2">
+                <motion.div
+                  whileHover={{ scale: 1.1, boxShadow: "0 0 10px rgba(59, 130, 246, 0.6)" }}
+                  className="w-12 h-12 rounded-full ring-2 ring-blue-500 overflow-hidden cursor-pointer"
+                  title={user.displayName || "User"}
+                >
+                  <img
+                    src={user.photoURL || "/default-avatar.png"}
+                    alt="User Avatar"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </motion.div>
+                <span className="font-semibold text-gray-800">{user.displayName || "User"}</span>
+              </div>
+            )}
+
             <NavLink
               to="/"
               className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300"
