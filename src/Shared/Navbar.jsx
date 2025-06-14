@@ -65,7 +65,6 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <div className="flex-shrink-0 flex items-center cursor-pointer space-x-3">
             <Link
               to="/"
@@ -86,32 +85,20 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-14 mx-auto text-lg">
-            <NavLink to="/" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>
-              Home
-            </NavLink>
-            <NavLink
-              to="/courses"
-              className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
-            >
-              Courses
-            </NavLink>
-            <NavLink
-              to="/add-course"
-              className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
-            >
-              Add Course
-            </NavLink>
-            <NavLink
-              to="/manageCourses"
-              className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
-            >
-              Manage Courses
-            </NavLink>
+          <div className="hidden lg:flex space-x-14 mx-auto text-lg">
+            <NavLink to="/" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Home</NavLink>
+            <NavLink to="/courses" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Courses</NavLink>
+            <NavLink to="/add-course" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Add Course</NavLink>
+            {user && (
+              <>
+                <NavLink to="/manageCourses" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Manage Courses</NavLink>
+                <NavLink to="/my-enrolled-courses" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>My Enrolled Courses</NavLink>
+              </>
+            )}
           </div>
 
           {/* Auth Buttons (Desktop) */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden lg:flex items-center space-x-2">
             {user ? (
               <>
                 <motion.div
@@ -137,24 +124,14 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <NavLink
-                  to="/login"
-                  className="px-6 py-2 rounded-full font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700"
-                >
-                  Login
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  className="px-6 py-2 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition duration-300"
-                >
-                  Register
-                </NavLink>
+                <NavLink to="/login" className="px-6 py-2 rounded-full font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700">Login</NavLink>
+                <NavLink to="/register" className="px-6 py-2 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition duration-300">Register</NavLink>
               </>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={toggleMenu}
               aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -175,10 +152,9 @@ const Navbar = () => {
             animate="visible"
             exit="exit"
             variants={mobileMenuVariants}
-            className="md:hidden rounded-b-lg px-6 py-6 space-y-5 border-t bg-white/90 backdrop-blur-lg border-gray-300"
+            className="lg:hidden rounded-b-lg px-6 py-6 space-y-5 border-t bg-white/90 backdrop-blur-lg border-gray-300"
             style={{ backdropFilter: "blur(20px)" }}
           >
-            {/* User Avatar and Name */}
             {user && (
               <div className="flex items-center space-x-4 mb-2">
                 <motion.div
@@ -196,27 +172,15 @@ const Navbar = () => {
               </div>
             )}
 
-            <NavLink
-              to="/"
-              className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300"
-              onClick={closeMenu}
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="/courses"
-              className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300"
-              onClick={closeMenu}
-            >
-              Courses
-            </NavLink>
-            <NavLink
-              to="/add-course"
-              className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300"
-              onClick={closeMenu}
-            >
-              Add Course
-            </NavLink>
+            <NavLink to="/" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Home</NavLink>
+            <NavLink to="/courses" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Courses</NavLink>
+            <NavLink to="/add-course" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Add Course</NavLink>
+            {user && (
+              <>
+                <NavLink to="/manageCourses" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Manage Courses</NavLink>
+                <NavLink to="/my-enrolled-courses" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>My Enrolled Courses</NavLink>
+              </>
+            )}
             <hr className="border-gray-300" />
             {user ? (
               <motion.button
@@ -233,20 +197,8 @@ const Navbar = () => {
               </motion.button>
             ) : (
               <>
-                <NavLink
-                  to="/login"
-                  className="block w-full text-center text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-3 rounded-full font-semibold shadow-md hover:from-indigo-600 hover:to-blue-700 transition duration-300"
-                  onClick={closeMenu}
-                >
-                  Login
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  className="block w-full text-center border-2 border-blue-600 text-blue-600 px-5 py-3 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition duration-300"
-                  onClick={closeMenu}
-                >
-                  Register
-                </NavLink>
+                <NavLink to="/login" className="block w-full text-center text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-3 rounded-full font-semibold shadow-md hover:from-indigo-600 hover:to-blue-700 transition duration-300" onClick={closeMenu}>Login</NavLink>
+                <NavLink to="/register" className="block w-full text-center border-2 border-blue-600 text-blue-600 px-5 py-3 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition duration-300" onClick={closeMenu}>Register</NavLink>
               </>
             )}
           </motion.div>
