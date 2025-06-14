@@ -7,6 +7,8 @@ import Login from "../Authentications/Login";
 import Courses from "../Pages/Courses";
 import AddCourses from "../Pages/AddCourses";
 import PrivetRouts from "./PrivateRoutes";
+import ManageCoursePage from "../Pages/ManageCoursePage";
+import EditCourse from "../Pages/Manage/EditCourse";
 
 
 const router = createBrowserRouter([
@@ -32,8 +34,16 @@ const router = createBrowserRouter([
                 element: <Courses></Courses>
             },
             {
+                path: '/edit-course/:id',
+                element: <PrivetRouts><EditCourse></EditCourse></PrivetRouts>
+            },
+            {
                 path: '/add-course',
                 element: <PrivetRouts><AddCourses></AddCourses></PrivetRouts>
+            },
+            {
+                path: '/manageCourses',
+                element: <PrivetRouts><ManageCoursePage></ManageCoursePage></PrivetRouts>
             }
         ]
     }

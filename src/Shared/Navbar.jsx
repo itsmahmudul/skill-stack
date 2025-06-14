@@ -102,6 +102,12 @@ const Navbar = () => {
             >
               Add Course
             </NavLink>
+            <NavLink
+              to="/manageCourses"
+              className={({ isActive }) => (isActive ? activeClass : inactiveClass)}
+            >
+              Manage Courses
+            </NavLink>
           </div>
 
           {/* Auth Buttons (Desktop) */}
