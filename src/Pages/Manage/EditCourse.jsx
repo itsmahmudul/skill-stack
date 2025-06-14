@@ -50,14 +50,16 @@ export default function EditCourse() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.put(`/courses/${id}`, form);
+      const { _id, ...formData } = form;
+      await axiosInstance.put(`/courses/${id}`, formData);
       toast.success("Course updated!");
-      navigate("/my-courses");
+      setTimeout(() => navigate("/manageCourses"), 500);
     } catch (err) {
       toast.error("Update failed");
       console.error(err);
     }
   };
+
 
   const InputWithIcon = ({ icon: Icon, label, name, value, onChange, type = "text" }) => {
     const isActive = Boolean(value?.trim());
@@ -80,9 +82,8 @@ export default function EditCourse() {
           placeholder={label}
         />
         <motion.div
-          className={`absolute left-3 top-[38px] pointer-events-none ${
-            isActive ? "text-blue-500" : "text-gray-400"
-          }`}
+          className={`absolute left-3 top-[38px] pointer-events-none ${isActive ? "text-blue-500" : "text-gray-400"
+            }`}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.9 }}
         >
@@ -202,9 +203,8 @@ export default function EditCourse() {
                 <option value="Data Science">Data Science</option>
               </motion.select>
               <motion.div
-                className={`absolute left-3 top-[38px] pointer-events-none ${
-                  form.category ? "text-blue-500" : "text-gray-400"
-                }`}
+                className={`absolute left-3 top-[38px] pointer-events-none ${form.category ? "text-blue-500" : "text-gray-400"
+                  }`}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
               >
