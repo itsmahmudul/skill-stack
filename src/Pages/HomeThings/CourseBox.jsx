@@ -21,26 +21,25 @@ const CourseBox = ({ courseData }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col"
+            className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 flex flex-col h-[500px] max-h-[500px]" // Fixed height
         >
             <img
                 src={courseData.imageUrl}
                 alt={courseData.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-cover" // Fixed image height
             />
 
             <div className="p-5 flex flex-col flex-grow">
                 <div className="space-y-3 flex-grow">
-                    <h2 className="text-xl font-semibold text-gray-800">
+                    <h2 className="text-xl font-semibold text-gray-800 line-clamp-1">
                         {courseData.title}
                     </h2>
-                    <p className="text-sm text-gray-600">{courseData.description}</p>
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                        {courseData.description}
+                    </p>
 
                     <div className="grid grid-cols-2 gap-3 text-sm text-gray-700">
-                        <div
-                            className="flex items-center gap-2"
-                            id={`duration-${uniqueId}`}
-                        >
+                        <div className="flex items-center gap-2" id={`duration-${uniqueId}`}>
                             <CalendarClock className="w-4 h-4 text-indigo-600" />
                             {courseData.duration}
                         </div>

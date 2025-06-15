@@ -4,6 +4,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Lottie from "lottie-react";
 import education from "../assets/education.json";
+import feedback from "../assets/feedback.json";
 
 import Banner from "./HomeThings/Banner";
 import CourseBox from "./HomeThings/CourseBox";
@@ -84,10 +85,134 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* students opinion */}
+            <section className="bg-gradient-to-b from-white to-blue-50 py-20">
+                <div className="max-w-7xl mx-auto px-4 text-center">
+                    <div className="flex justify-center mb-6">
+                        <Lottie animationData={feedback} className="h-40 w-40" loop={true} />
+                    </div>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-12">
+                        What Our Students Say
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {[
+                            {
+                                name: "Ariana",
+                                review: "This platform helped me get my first job in digital marketing!",
+                                avatar: "https://i.pravatar.cc/150?img=47",
+                            },
+                            {
+                                name: "Rahim",
+                                review: "The courses are well-structured and very practical.",
+                                avatar: "https://i.pravatar.cc/150?img=56",
+                            },
+                            {
+                                name: "Ariful",
+                                review: "Highly recommend for anyone looking to learn SEO and analytics.",
+                                avatar: "https://i.pravatar.cc/150?img=52",
+                            },
+                        ].map((testimonial, idx) => (
+                            <div
+                                key={idx}
+                                className="bg-white border border-gray-200 p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300"
+                            >
+                                <div className="flex flex-col items-center">
+                                    <img
+                                        src={testimonial.avatar}
+                                        alt={testimonial.name}
+                                        className="w-16 h-16 rounded-full mb-4 border-2 border-indigo-500"
+                                    />
+                                    <p className="text-gray-700 text-base italic mb-4">"{testimonial.review}"</p>
+                                    <p className="text-indigo-600 font-semibold text-sm">— {testimonial.name}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+
             {/* Popular Courses Section */}
             <section>
                 <PopularCourse></PopularCourse>
             </section>
+
+            {/* our services */}
+            <section className="bg-gray-100 py-16">
+                <div className="max-w-7xl mx-auto px-4 text-center">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-10">Our Services</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[
+                            {
+                                title: "Expert-Led Courses",
+                                description: "Learn from industry professionals with years of hands-on experience.",
+                                icon: "🎓",
+                            },
+                            {
+                                title: "Career Guidance",
+                                description: "Get personalized mentorship and support to kickstart your career.",
+                                icon: "💼",
+                            },
+                            {
+                                title: "Certification",
+                                description: "Earn globally recognized certificates to boost your resume.",
+                                icon: "📜",
+                            },
+                        ].map((service, index) => (
+                            <div
+                                key={index}
+                                className="bg-white p-6 rounded-xl shadow hover:shadow-md transition"
+                            >
+                                <div className="text-4xl mb-4">{service.icon}</div>
+                                <h3 className="text-xl font-semibold text-gray-800 mb-2">{service.title}</h3>
+                                <p className="text-gray-600 text-sm">{service.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* FAQ Section */}
+            <section className="bg-white py-20 border-t border-gray-200">
+                <div className="max-w-6xl mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+                            Frequently Asked Questions
+                        </h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            Find answers to common questions about our courses, certifications, and platform features.
+                        </p>
+                    </div>
+                    <div className="space-y-6">
+                        {[
+                            {
+                                question: "Are the courses beginner-friendly?",
+                                answer: "Yes! We offer courses for all levels, including complete beginners. Each course clearly states the required experience level.",
+                            },
+                            {
+                                question: "Do I get a certificate after completing a course?",
+                                answer: "Absolutely. All our courses come with industry-recognized certificates upon completion.",
+                            },
+                            {
+                                question: "How long will I have access to the course?",
+                                answer: "Once enrolled, you’ll have lifetime access to the course materials, including future updates.",
+                            },
+                            {
+                                question: "Can I learn at my own pace?",
+                                answer: "Yes, our courses are self-paced, allowing you to learn anytime, anywhere at your convenience.",
+                            },
+                        ].map((faq, index) => (
+                            <div key={index} className="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md transition">
+                                <h4 className="text-lg font-semibold text-indigo-600 mb-2">{faq.question}</h4>
+                                <p className="text-gray-700 text-sm">{faq.answer}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+
+
         </div>
     );
 };

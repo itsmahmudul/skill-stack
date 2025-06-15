@@ -41,7 +41,7 @@ const PopularCourse = () => {
                     transition={{ duration: 0.7 }}
                     className="w-32 mx-auto mb-6"
                 >
-                    <Lottie animationData={trophy} loop={true} />
+                    <Lottie animationData={trophy} className="h-40 w-40" loop={true} />
                 </motion.div>
 
                 <motion.h2
