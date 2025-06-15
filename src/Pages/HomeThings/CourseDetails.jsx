@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router";
+import Lottie from "lottie-react";
+import successAnimation from "../../assets/success.json";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import axiosInstance from "../../Lib/axios";
@@ -16,6 +18,7 @@ const CourseDetails = () => {
     const { id } = useParams();
     const { user } = useContext(AuthContext);
     const [course, setCourse] = useState(null);
+    const [showAnimation, setShowAnimation] = useState(false);
     const [isEnrolled, setIsEnrolled] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -63,12 +66,20 @@ const CourseDetails = () => {
             });
             toast.success("Successfully Enrolled!");
             setIsEnrolled(true);
+
+            setCourse(prev => ({
+                ...prev,
+                seatsLeft: prev.seatsLeft - 1
+            }));
+
+            // Show success animation
+            setShowAnimation(true);
+            setTimeout(() => setShowAnimation(false), 3000);
         } catch (error) {
             console.log(error);
             toast.error("Enrollment failed or already enrolled.");
         }
     };
-
 
     if (loading) return <div className="text-center py-20 text-lg font-semibold animate-pulse">Loading...</div>;
     if (!course) return <div className="text-center py-20 text-red-500 text-lg">Course not found</div>;
@@ -191,8 +202,7 @@ const CourseDetails = () => {
                     </div>
                     <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
                         <div
-                            className={`h-full ${course.seatsLeft > 0 ? "bg-green-500" : "bg-red-500"
-                                } transition-all duration-300`}
+                            className={`h-full ${course.seatsLeft > 0 ? "bg-green-500" : "bg-red-500"}`}
                             style={{
                                 width: `${((course.totalSeats - course.seatsLeft) / course.totalSeats) * 100}%`,
                             }}
@@ -208,7 +218,7 @@ const CourseDetails = () => {
                     disabled={isEnrolled || course.seatsLeft === 0}
                     whileHover={{ scale: isEnrolled ? 1 : 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`w-full py-3 text-lg rounded-xl font-semibold transition-all duration-300 shadow-md tracking-wide
+                    className={`w-full cursor-pointer py-3 text-lg rounded-xl font-semibold transition-all duration-300 shadow-md tracking-wide
                     ${isEnrolled || course.seatsLeft === 0
                             ? "bg-green-500 text-white cursor-not-allowed"
                             : "bg-indigo-600 hover:bg-indigo-700 text-white animate-pulse"
@@ -245,6 +255,17 @@ const CourseDetails = () => {
                         ))}
                     </div>
                 </motion.div>
+            )}
+
+            {/* ✅ Lottie Animation Overlay */}
+            {showAnimation && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                    <Lottie
+                        animationData={successAnimation}
+                        style={{ width: 250, height: 250 }}
+                        loop={false}
+                    />
+                </div>
             )}
         </motion.div>
     );

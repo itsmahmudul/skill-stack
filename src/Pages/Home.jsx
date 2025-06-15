@@ -57,7 +57,7 @@ const Home = () => {
                 </motion.div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
-                    {coursesData.map((courseData) => (
+                    {coursesData.slice(0, 6).map((courseData) => (
                         <CourseBox key={courseData._id} courseData={courseData} />
                     ))}
                 </div>
