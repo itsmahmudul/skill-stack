@@ -89,7 +89,7 @@ const CourseDetails = () => {
 
     return (
         <motion.div
-            className="max-w-6xl mx-auto px-6 py-10 mt-12 bg-gradient-to-br from-white via-gray-50 to-white shadow-xl rounded-3xl"
+            className="max-w-6xl mx-auto px-6 py-10 my-20 bg-gradient-to-br from-white via-gray-50 to-white shadow-xl rounded-3xl"
             initial="hidden"
             animate="visible"
             variants={fadeInUp}

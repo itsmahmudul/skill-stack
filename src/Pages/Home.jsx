@@ -7,6 +7,7 @@ import education from "../assets/education.json";
 
 import Banner from "./HomeThings/Banner";
 import CourseBox from "./HomeThings/CourseBox";
+import PopularCourse from "./HomeThings/PopularCourse";
 
 const Home = () => {
     const coursesData = useLoaderData();
@@ -81,6 +82,11 @@ const Home = () => {
                         </Link>
                     </motion.div>
                 </div>
+            </section>
+
+            {/* Popular Courses Section */}
+            <section>
+                <PopularCourse></PopularCourse>
             </section>
         </div>
     );
