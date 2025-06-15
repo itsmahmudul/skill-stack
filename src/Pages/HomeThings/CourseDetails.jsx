@@ -8,7 +8,6 @@ import axiosInstance from "../../Lib/axios";
 import AuthContext from "../../Context/AuthContext";
 import { Star, ArrowLeft } from "lucide-react";
 
-// Framer Motion variants
 const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -20,6 +19,7 @@ const CourseDetails = () => {
     const [course, setCourse] = useState(null);
     const [showAnimation, setShowAnimation] = useState(false);
     const [isEnrolled, setIsEnrolled] = useState(false);
+    const [myEnrollments, setMyEnrollments] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -38,17 +38,23 @@ const CourseDetails = () => {
     }, [id]);
 
     useEffect(() => {
-        const checkEnrollment = async () => {
-            if (!user) return;
+        if (!user) return;
+
+        const fetchStatus = async () => {
             try {
-                const res = await axiosInstance.get(`/enrollments?email=${user.email}&courseId=${id}`);
-                if (res.data?.enrolled) setIsEnrolled(true);
-            } catch (error) {
-                console.log(error);
-                console.error("Enrollment check failed");
+                const [enrollRes, myRes] = await Promise.all([
+                    axiosInstance.get(`/enrollments?email=${user.email}&courseId=${id}`),
+                    axiosInstance.get(`/my-enrollments?email=${user.email}`)
+                ]);
+
+                if (enrollRes.data?.enrolled) setIsEnrolled(true);
+                if (myRes.data) setMyEnrollments(myRes.data);
+            } catch (err) {
+                console.error("Failed to fetch enrollment status", err);
             }
         };
-        checkEnrollment();
+
+        fetchStatus();
     }, [user, id]);
 
     const handleEnroll = async () => {
@@ -59,25 +65,33 @@ const CourseDetails = () => {
             return;
         }
 
+        if (myEnrollments.length >= 3) {
+            toast.error("⚠️ You can only enroll in 3 courses at a time.");
+            return;
+        }
+
         try {
             await axiosInstance.post("/enrollments", {
                 email: user.email,
                 courseId: id,
             });
+
             toast.success("Successfully Enrolled!");
             setIsEnrolled(true);
 
-            setCourse(prev => ({
+            setCourse((prev) => ({
                 ...prev,
-                seatsLeft: prev.seatsLeft - 1
+                seatsLeft: prev.seatsLeft - 1,
             }));
 
-            // Show success animation
+            setMyEnrollments((prev) => [...prev, course]);
+
             setShowAnimation(true);
             setTimeout(() => setShowAnimation(false), 3000);
         } catch (error) {
             console.log(error);
-            toast.error("Enrollment failed or already enrolled.");
+            const message = error?.response?.data?.error || "Enrollment failed";
+            toast.error(message);
         }
     };
 
@@ -86,6 +100,8 @@ const CourseDetails = () => {
 
     const requirementsList = course.requirements?.split(/[,•\n]+|\s{2,}/).map(item => item.trim()).filter(Boolean);
     const learningsList = course.learnings?.split(/[,•\n]+|\s{2,}/).map(item => item.trim()).filter(Boolean);
+
+    const maxLimitReached = myEnrollments.length >= 3;
 
     return (
         <motion.div
@@ -104,7 +120,6 @@ const CourseDetails = () => {
                 </Link>
             </motion.div>
 
-            {/* Course Image */}
             <motion.img
                 src={course.imageUrl}
                 alt={course.title}
@@ -114,7 +129,6 @@ const CourseDetails = () => {
                 transition={{ delay: 0.3 }}
             />
 
-            {/* Title + Rating */}
             <motion.h1 className="text-4xl font-extrabold text-gray-800 mb-3 tracking-tight">
                 {course.title}
             </motion.h1>
@@ -136,12 +150,10 @@ const CourseDetails = () => {
                 </motion.div>
             )}
 
-            {/* Description */}
             <p className="text-gray-700 text-base leading-relaxed mb-6">
                 {course.description}
             </p>
 
-            {/* Course Info */}
             <div className="grid sm:grid-cols-2 gap-4 text-sm text-gray-600 mb-8">
                 <p><strong>⏳ Duration:</strong> {course.duration}</p>
                 <p><strong>📚 Category:</strong> {course.category}</p>
@@ -151,7 +163,6 @@ const CourseDetails = () => {
                 <p><strong>📅 Date:</strong> {new Date(course.createdAt).toLocaleDateString()}</p>
             </div>
 
-            {/* Requirements */}
             {requirementsList.length > 0 && (
                 <div className="mb-8">
                     <h2 className="text-2xl font-semibold mb-2 text-gray-800">📌 Requirements</h2>
@@ -165,7 +176,6 @@ const CourseDetails = () => {
                 </div>
             )}
 
-            {/* What You'll Learn */}
             {learningsList.length > 0 && (
                 <div className="mb-10">
                     <h2 className="text-2xl font-semibold mb-3 text-gray-800">🎯 What You'll Learn</h2>
@@ -215,11 +225,11 @@ const CourseDetails = () => {
             {user ? (
                 <motion.button
                     onClick={handleEnroll}
-                    disabled={isEnrolled || course.seatsLeft === 0}
-                    whileHover={{ scale: isEnrolled ? 1 : 1.05 }}
+                    disabled={isEnrolled || course.seatsLeft === 0 || maxLimitReached}
+                    whileHover={{ scale: isEnrolled || course.seatsLeft === 0 || maxLimitReached ? 1 : 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={`w-full cursor-pointer py-3 text-lg rounded-xl font-semibold transition-all duration-300 shadow-md tracking-wide
-                    ${isEnrolled || course.seatsLeft === 0
+                    ${isEnrolled || course.seatsLeft === 0 || maxLimitReached
                             ? "bg-green-500 text-white cursor-not-allowed"
                             : "bg-indigo-600 hover:bg-indigo-700 text-white animate-pulse"
                         }`}
@@ -228,7 +238,9 @@ const CourseDetails = () => {
                         ? "🎉 Enrolled"
                         : course.seatsLeft === 0
                             ? "🚫 Full - No Seats"
-                            : "🚀 Enroll Now"}
+                            : maxLimitReached
+                                ? "⚠️ Limit Reached (Max 3)"
+                                : "🚀 Enroll Now"}
                 </motion.button>
             ) : (
                 <div className="text-center text-red-500 font-medium text-sm mt-6">
@@ -257,7 +269,7 @@ const CourseDetails = () => {
                 </motion.div>
             )}
 
-            {/* ✅ Lottie Animation Overlay */}
+            {/* Lottie Animation */}
             {showAnimation && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
                     <Lottie
