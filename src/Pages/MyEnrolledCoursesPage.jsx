@@ -5,40 +5,53 @@ import AuthContext from "../Context/AuthContext";
 import axiosInstance from "../Lib/axios";
 
 const MyEnrolledCourses = () => {
-    const { user } = useContext(AuthContext);
+    const { user, getJWTToken } = useContext(AuthContext);
     const [enrollments, setEnrollments] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (user?.email) {
-            axiosInstance
-                .get(`/my-enrollments?email=${user.email}`)
-                .then((res) => {
-                    setEnrollments(res.data);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    toast.error("Failed to load enrollments");
-                })
-                .finally(() => setLoading(false));
-        } else {
-            setLoading(false);
-        }
-    }, [user]);
+        const fetchEnrollments = async () => {
+            if (!user?.email) {
+                setLoading(false);
+                return;
+            }
 
-    const handleRemove = (enrollmentId) => {
+            try {
+                const token = await getJWTToken();
+                const res = await axiosInstance.get(`/my-enrollments?email=${user.email}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setEnrollments(res.data);
+            } catch (err) {
+                console.error(err);
+                toast.error("Failed to load enrollments");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEnrollments();
+    }, [user, getJWTToken]);
+
+    const handleRemove = async (enrollmentId) => {
         if (!window.confirm("Are you sure you want to remove this enrollment?")) return;
 
-        axiosInstance
-            .delete(`/enrollments/${enrollmentId}`)
-            .then(() => {
-                toast.success("Enrollment removed successfully");
-                setEnrollments((prev) => prev.filter((enroll) => enroll._id !== enrollmentId));
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Failed to remove enrollment");
+        try {
+            const token = await getJWTToken();
+            await axiosInstance.delete(`/enrollments/${enrollmentId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
+
+            toast.success("Enrollment removed successfully");
+            setEnrollments((prev) => prev.filter((enroll) => enroll._id !== enrollmentId));
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to remove enrollment");
+        }
     };
 
     if (loading) {
@@ -85,11 +98,14 @@ const MyEnrolledCourses = () => {
                                         className="border-t hover:bg-gray-100"
                                     >
                                         <td className="py-3 px-4">
-                                            {course?.title || <span className="text-gray-400 italic">[Deleted]</span>}
+                                            {course?.title || (
+                                                <span className="text-gray-400 italic">[Deleted]</span>
+                                            )}
                                         </td>
                                         <td className="py-3 px-4">
-                                            {course?.instructor || <span className="text-gray-400">{user.displayName
-                                            }</span>}
+                                            {course?.instructor || (
+                                                <span className="text-gray-400">{user.displayName}</span>
+                                            )}
                                         </td>
                                         <td className="py-3 px-4">
                                             ৳{course?.price?.toFixed(2) || "0.00"}
@@ -102,7 +118,7 @@ const MyEnrolledCourses = () => {
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
                                                 onClick={() => handleRemove(enroll._id)}
-                                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                                                className="px-4 cursor-pointer py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
                                             >
                                                 Remove
                                             </motion.button>

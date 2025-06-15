@@ -6,7 +6,7 @@ import AuthContext from "../Context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function MyCourses() {
-    const { user } = useContext(AuthContext);
+    const { user, getJWTToken } = useContext(AuthContext);
     const [courses, setCourses] = useState([]);
     const [filteredCourses, setFilteredCourses] = useState([]);
     const [deletingCourseId, setDeletingCourseId] = useState(null);
@@ -26,7 +26,12 @@ export default function MyCourses() {
 
     const fetchCourses = async () => {
         try {
-            const res = await axiosInstance.get(`/courses?user=${user?.email}`);
+            const token = await getJWTToken();
+            const res = await axiosInstance.get(`/courses?user=${user?.email}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setCourses(res.data);
         } catch (err) {
             console.error(err);
@@ -39,12 +44,17 @@ export default function MyCourses() {
             course.title.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredCourses(filtered);
-        setCurrentPage(1); // Reset to first page on search
+        setCurrentPage(1);
     };
 
     const handleDelete = async () => {
         try {
-            await axiosInstance.delete(`/courses/${deletingCourseId}`);
+            const token = await getJWTToken();
+            await axiosInstance.delete(`/courses/${deletingCourseId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             toast.success("Course deleted");
             const updatedCourses = courses.filter((c) => c._id !== deletingCourseId);
             setCourses(updatedCourses);
@@ -137,9 +147,7 @@ export default function MyCourses() {
                                 <button
                                     key={i}
                                     onClick={() => setCurrentPage(i + 1)}
-                                    className={`px-3 py-1 border rounded ${currentPage === i + 1
-                                        ? "bg-gray-800 text-white"
-                                        : ""
+                                    className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-gray-800 text-white" : ""
                                         }`}
                                 >
                                     {i + 1}
@@ -157,6 +165,7 @@ export default function MyCourses() {
                 </>
             )}
 
+            {/* Delete Confirmation Modal */}
             <AnimatePresence>
                 {isModalOpen && (
                     <motion.div

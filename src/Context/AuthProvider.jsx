@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AuthContext from './AuthContext';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getIdToken, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '../FIrebase/firebase.config';
 
 
@@ -30,12 +30,20 @@ const AuthProvider = ({ children }) => {
         return signInWithPopup(auth, googleProvider);
     }
 
-     const logOutUser = () => {
+    const logOutUser = () => {
         setLoading(true);
         return signOut(auth);
     }
 
-    useEffect( () => {
+    const getJWTToken = async () => {
+        if (auth.currentUser) {
+            return await getIdToken(auth.currentUser);
+        }
+        return null;
+    };
+
+
+    useEffect(() => {
         const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             setLoading(false);
@@ -43,7 +51,7 @@ const AuthProvider = ({ children }) => {
         return () => {
             unSubscribe();
         }
-    } , [])
+    }, [])
 
     console.log(user)
 
@@ -54,6 +62,7 @@ const AuthProvider = ({ children }) => {
         signInUser,
         googleSignIn,
         logOutUser,
+        getJWTToken,
         loading
     }
 

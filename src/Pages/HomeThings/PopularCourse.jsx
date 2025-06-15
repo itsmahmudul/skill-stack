@@ -10,7 +10,7 @@ const PopularCourse = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("http://localhost:3000/popular-courses")
+        axios.get("https://skill-stack-server.vercel.app/popular-courses")
             .then((res) => {
                 setPopularCourses(res.data);
                 setLoading(false);
