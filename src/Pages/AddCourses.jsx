@@ -15,7 +15,6 @@ const fadeInUp = {
 
 export default function AddCourseForm() {
     const { user } = useContext(AuthContext);
-    console.log(user);
     const [loading, setLoading] = useState(false);
 
     const [form, setForm] = useState({
@@ -28,6 +27,7 @@ export default function AddCourseForm() {
         level: "",
         requirements: "",
         learnings: "",
+        totalSeats: "", // ✅ Added
     });
 
     const handleChange = (e) => {
@@ -41,6 +41,7 @@ export default function AddCourseForm() {
         const newCourse = {
             ...form,
             price: parseFloat(form.price),
+            totalSeats: parseInt(form.totalSeats), // ✅ Cast to integer
             creatorEmail: user.email,
             creatorName: user.displayName || "Anonymous",
             createdAt: new Date().toISOString(),
@@ -62,6 +63,7 @@ export default function AddCourseForm() {
                 level: "",
                 requirements: "",
                 learnings: "",
+                totalSeats: "",
             });
         } catch (err) {
             console.error(err);
@@ -76,6 +78,7 @@ export default function AddCourseForm() {
         { name: "imageUrl", placeholder: "Image URL" },
         { name: "duration", placeholder: "Duration (e.g., 6 weeks)" },
         { name: "price", placeholder: "Course Price (৳)", type: "number" },
+        { name: "totalSeats", placeholder: "Total Seats", type: "number" }, // ✅ New input
     ];
 
     const textareas = [
@@ -117,6 +120,7 @@ export default function AddCourseForm() {
                             value={form[input.name]}
                             onChange={handleChange}
                             required
+                            min={input.type === "number" ? 1 : undefined}
                             whileFocus={{ scale: 1.03 }}
                             className="input-style border border-slate-300 shadow-md px-4 py-3 rounded-xl bg-white/60 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-300 w-full"
                         />

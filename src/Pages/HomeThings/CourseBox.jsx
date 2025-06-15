@@ -11,9 +11,10 @@ import {
 } from "lucide-react";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
+import { Link } from "react-router";
 
 const CourseBox = ({ courseData }) => {
-    const uniqueId = courseData.id; // assuming each course has a unique ID
+    const uniqueId = courseData.id;
 
     return (
         <motion.div
@@ -69,10 +70,12 @@ const CourseBox = ({ courseData }) => {
                     </div>
                 </div>
 
-                <button className="w-full cursor-pointer mt-4 text-sm font-semibold py-2.5 px-5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out flex items-center justify-center gap-2 group">
-                    View More Details
-                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
+                <Link to={`/course-details/${courseData._id}`}>
+                    <button className="w-full cursor-pointer mt-4 text-sm font-semibold py-2.5 px-5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out flex items-center justify-center gap-2 group">
+                        View More Details
+                        <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </button>
+                </Link>
             </div>
 
             {/* ✅ Tooltips */}

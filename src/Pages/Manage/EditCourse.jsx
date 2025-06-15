@@ -24,7 +24,8 @@ export default function EditCourse() {
     duration: "",
     category: "",
     creatorName: "",
-    creatorEmail: ""
+    creatorEmail: "",
+    totalSeats: "", // Added totalSeats
   });
 
   const [loading, setLoading] = useState(true);
@@ -60,9 +61,8 @@ export default function EditCourse() {
     }
   };
 
-
   const InputWithIcon = ({ icon: Icon, label, name, value, onChange, type = "text" }) => {
-    const isActive = Boolean(value?.trim());
+    const isActive = Boolean(value?.toString().trim());
 
     return (
       <div className="relative w-full">
@@ -180,37 +180,46 @@ export default function EditCourse() {
               value={form.duration}
               onChange={handleChange}
             />
-            <div className="relative w-full">
-              <label
-                htmlFor="category"
-                className="text-sm font-semibold text-gray-700 flex items-center gap-1 mb-1"
-              >
-                <Layers size={16} /> Category
-              </label>
-              <motion.select
-                id="category"
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                required
-                whileFocus={{ scale: 1.01 }}
-                className="pl-10 pt-2 pb-2 pr-3 w-full border border-slate-300 rounded-xl bg-white/60 backdrop-blur-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Category</option>
-                <option value="Web Development">Web Development</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Data Science">Data Science</option>
-              </motion.select>
-              <motion.div
-                className={`absolute left-3 top-[38px] pointer-events-none ${form.category ? "text-blue-500" : "text-gray-400"
-                  }`}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Layers size={18} />
-              </motion.div>
-            </div>
+            <InputWithIcon
+              icon={User2}
+              label="Total Seats"
+              name="totalSeats"
+              value={form.totalSeats}
+              onChange={handleChange}
+              type="number"
+            />
+          </div>
+
+          <div className="relative w-full">
+            <label
+              htmlFor="category"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-1 mb-1"
+            >
+              <Layers size={16} /> Category
+            </label>
+            <motion.select
+              id="category"
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              required
+              whileFocus={{ scale: 1.01 }}
+              className="pl-10 pt-2 pb-2 pr-3 w-full border border-slate-300 rounded-xl bg-white/60 backdrop-blur-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Category</option>
+              <option value="Web Development">Web Development</option>
+              <option value="Design">Design</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Data Science">Data Science</option>
+            </motion.select>
+            <motion.div
+              className={`absolute left-3 top-[38px] pointer-events-none ${form.category ? "text-blue-500" : "text-gray-400"
+                }`}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <Layers size={18} />
+            </motion.div>
           </div>
 
           <div className="flex justify-end pt-4">

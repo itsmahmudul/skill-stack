@@ -10,6 +10,7 @@ import PrivetRouts from "./PrivateRoutes";
 import ManageCoursePage from "../Pages/ManageCoursePage";
 import EditCourse from "../Pages/Manage/EditCourse";
 import MyEnrolledCoursesPage from "../Pages/MyEnrolledCoursesPage";
+import CourseDetails from "../Pages/HomeThings/CourseDetails";
 
 
 const router = createBrowserRouter([
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
             {
                 path: '/my-enrolled-courses',
                 element: <PrivetRouts><MyEnrolledCoursesPage></MyEnrolledCoursesPage></PrivetRouts>
+            },
+            {
+                path: '/course-details/:id',
+                element: <PrivetRouts><CourseDetails></CourseDetails></PrivetRouts>
             }
         ]
     }
