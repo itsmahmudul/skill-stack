@@ -4,6 +4,10 @@ import { toast } from "react-toastify";
 import axiosInstance from "../Lib/axios";
 import AuthContext from "../Context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import Lottie from "lottie-react";
+import loadingAnimation from "../assets/loading.json";
+import emptyAnimation from "../assets/emty.json";
+import warningAnimation from "../assets/warning.json";
 
 export default function MyCourses() {
     const { user, getJWTToken } = useContext(AuthContext);
@@ -13,6 +17,7 @@ export default function MyCourses() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [isLoading, setIsLoading] = useState(true);
     const coursesPerPage = 5;
     const navigate = useNavigate();
 
@@ -36,6 +41,8 @@ export default function MyCourses() {
         } catch (err) {
             console.error(err);
             toast.error("Failed to load courses");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -82,22 +89,32 @@ export default function MyCourses() {
 
     return (
         <div className="min-h-screen max-w-6xl mx-auto px-4 py-10">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 flex-col md:flex-row gap-4">
                 <h2 className="text-2xl font-bold">My Courses</h2>
                 <input
                     type="text"
                     placeholder="Search by title..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border border-gray-300 rounded px-3 py-2 w-64"
+                    className="border border-gray-300 rounded px-3 py-2 w-full md:w-64"
                 />
             </div>
 
-            {filteredCourses.length === 0 ? (
-                <p>No courses found.</p>
+            {/* Loading Animation */}
+            {isLoading ? (
+                <div className="flex justify-center items-center h-[300px]">
+                    <Lottie animationData={loadingAnimation} style={{ height: 180 }} />
+                </div>
+            ) : filteredCourses.length === 0 ? (
+                // Empty State Animation
+                <div className="flex flex-col items-center justify-center py-10">
+                    <Lottie animationData={emptyAnimation} style={{ height: 200 }} />
+                    <p className="mt-4 text-gray-500 text-lg">No courses found.</p>
+                </div>
             ) : (
                 <>
-                    <div className="overflow-x-auto rounded-xl shadow">
+                    {/* Table for desktop */}
+                    <div className="hidden md:block overflow-x-auto rounded-xl shadow">
                         <table className="min-w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-gray-100 text-gray-700">
@@ -131,6 +148,38 @@ export default function MyCourses() {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* Card layout for mobile */}
+                    <div className="md:hidden space-y-4">
+                        {currentCourses.map((course) => (
+                            <motion.div
+                                key={course._id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="border rounded-lg p-4 shadow-sm bg-white"
+                            >
+                                <h3 className="text-lg font-semibold">{course.title}</h3>
+                                <p className="text-sm text-gray-700 mb-2">
+                                    {course.description.slice(0, 100)}...
+                                </p>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => navigate(`/edit-course/${course._id}`)}
+                                        className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 w-full"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => openModal(course._id)}
+                                        className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 w-full"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
 
                     {/* Pagination */}
@@ -180,9 +229,12 @@ export default function MyCourses() {
                             animate={{ scale: 1 }}
                             exit={{ scale: 0.8 }}
                         >
-                            <h3 className="text-lg font-semibold mb-4">
-                                Are you sure you want to delete this course?
-                            </h3>
+                            <div className="flex flex-col items-center mb-4">
+                                <Lottie animationData={warningAnimation} style={{ height: 80 }} />
+                                <h3 className="text-lg font-semibold mt-2 text-center">
+                                    Are you sure you want to delete this course?
+                                </h3>
+                            </div>
                             <div className="flex justify-end space-x-3">
                                 <button
                                     onClick={closeModal}
