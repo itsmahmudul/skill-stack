@@ -1,12 +1,51 @@
-# React + Vite
+# 🧠 Skill Stack – React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Skill Stack is a modern full-stack **online course platform** built with **React**, **Vite**, **Express.js**, and **MongoDB**. This project provides a dynamic and responsive frontend with smooth animations and secure authentication, offering different experiences for students, instructors, and admins.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Live Preview
 
-## Expanding the ESLint configuration
+🔗 [Visit Skill Stack](https://skill-stack-e19ed.web.app/)  
+_(Replace with your deployed frontend URL)_
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+### 💻 Frontend
+
+- ⚡ React + Vite
+- 🎨 Tailwind CSS
+- 🔁 React Router
+- 🔔 React Toastify
+- 🎞️ Lottie React
+- 🎭 React Icons
+
+### 🔧 Backend (Separate Repo)
+
+- 🌐 Express.js
+- 🛢️ MongoDB (Native Driver)
+- 🔐 Firebase Admin (JWT Authentication)
+
+---
+
+## 📦 Features
+
+- 🔐 Firebase JWT Authentication
+- 🎓 Enroll in Courses
+- 📋 Manage Courses (Add, Edit, Delete)
+- 👤 Role-based Access (Student, Instructor, Admin)
+- 📈 Progress bar & multi-step forms
+- 🎥 Engaging UI with Lottie animations
+- 🧭 Private Routes for secured pages
+- 📱 Fully Responsive UI
+
+---
+
+## 👨‍💻 Author
+- Muhammad Shuvo
+- 🌐 GitHub:(https://github.com/mahmudul11223344)
+- ✉️ islamashraf128@gmail.com
+
+
