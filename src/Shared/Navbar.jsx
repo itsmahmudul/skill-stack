@@ -24,7 +24,7 @@ const mobileMenuVariants = {
 };
 
 const Navbar = () => {
-  const { logOutUser, user } = useContext(AuthContext);
+  const { logOutUser, user, loading } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -66,11 +66,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 flex items-center cursor-pointer space-x-3">
-            <Link
-              to="/"
-              className="flex items-center space-x-2 select-none"
-              aria-label="SkillStack Home"
-            >
+            <Link to="/" className="flex items-center space-x-2 select-none">
               <motion.img
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 300 }}
@@ -89,7 +85,7 @@ const Navbar = () => {
             <NavLink to="/" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Home</NavLink>
             <NavLink to="/courses" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Courses</NavLink>
             <NavLink to="/add-course" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Add Course</NavLink>
-            {user && (
+            {!loading && user && (
               <>
                 <NavLink to="/manageCourses" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>Manage Courses</NavLink>
                 <NavLink to="/my-enrolled-courses" className={({ isActive }) => (isActive ? activeClass : inactiveClass)}>My Enrolled Courses</NavLink>
@@ -99,34 +95,36 @@ const Navbar = () => {
 
           {/* Auth Buttons (Desktop) */}
           <div className="hidden lg:flex items-center space-x-2">
-            {user ? (
-              <>
-                <motion.div
-                  whileHover={{ scale: 1.15, boxShadow: "0 0 10px rgba(59, 130, 246, 0.6)" }}
-                  className="w-11 h-11 rounded-full ring-2 ring-blue-500 overflow-hidden cursor-pointer"
-                  title={user.displayName || "User"}
-                >
-                  <img
-                    src={user.photoURL || "/default-avatar.png"}
-                    alt="User Avatar"
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                </motion.div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleLogOut}
-                  className="relative cursor-pointer rounded-lg px-6 py-2.5 overflow-hidden group font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700"
-                >
-                  <span className="absolute right-0 w-10 h-36 -mt-16 transition-all duration-1000 transform translate-x-14 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease-in-out"></span>
-                  <span className="relative">Log Out</span>
-                </motion.button>
-              </>
-            ) : (
-              <>
-                <NavLink to="/login" className="px-6 py-2 rounded-full font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700">Login</NavLink>
-                <NavLink to="/register" className="px-6 py-2 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition duration-300">Register</NavLink>
-              </>
+            {!loading && (
+              user ? (
+                <>
+                  <motion.div
+                    whileHover={{ scale: 1.15, boxShadow: "0 0 10px rgba(59, 130, 246, 0.6)" }}
+                    className="w-11 h-11 rounded-full ring-2 ring-blue-500 overflow-hidden cursor-pointer"
+                    title={user.displayName || "User"}
+                  >
+                    <img
+                      src={user.photoURL || "/default-avatar.png"}
+                      alt="User Avatar"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </motion.div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleLogOut}
+                    className="relative cursor-pointer rounded-lg px-6 py-2.5 overflow-hidden group font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700"
+                  >
+                    <span className="absolute right-0 w-10 h-36 -mt-16 transition-all duration-1000 transform translate-x-14 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease-in-out"></span>
+                    <span className="relative">Log Out</span>
+                  </motion.button>
+                </>
+              ) : (
+                <>
+                  <NavLink to="/login" className="px-6 py-2 rounded-full font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700">Login</NavLink>
+                  <NavLink to="/register" className="px-6 py-2 rounded-full border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition duration-300">Register</NavLink>
+                </>
+              )
             )}
           </div>
 
@@ -155,7 +153,7 @@ const Navbar = () => {
             className="lg:hidden rounded-b-lg px-6 py-6 space-y-5 border-t bg-white/90 backdrop-blur-lg border-gray-300"
             style={{ backdropFilter: "blur(20px)" }}
           >
-            {user && (
+            {!loading && user && (
               <div className="flex items-center space-x-4 mb-2">
                 <motion.div
                   whileHover={{ scale: 1.1, boxShadow: "0 0 10px rgba(59, 130, 246, 0.6)" }}
@@ -172,34 +170,36 @@ const Navbar = () => {
               </div>
             )}
 
-            <NavLink to="/" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Home</NavLink>
-            <NavLink to="/courses" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Courses</NavLink>
-            <NavLink to="/add-course" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Add Course</NavLink>
-            {user && (
+            <NavLink to="/" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">Home</NavLink>
+            <NavLink to="/courses" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">Courses</NavLink>
+            <NavLink to="/add-course" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">Add Course</NavLink>
+            {!loading && user && (
               <>
-                <NavLink to="/manageCourses" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>Manage Courses</NavLink>
-                <NavLink to="/my-enrolled-courses" className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300" onClick={closeMenu}>My Enrolled Courses</NavLink>
+                <NavLink to="/manageCourses" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">Manage Courses</NavLink>
+                <NavLink to="/my-enrolled-courses" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">My Enrolled Courses</NavLink>
               </>
             )}
             <hr className="border-gray-300" />
-            {user ? (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  handleLogOut();
-                  closeMenu();
-                }}
-                className="w-full text-center cursor-pointer relative rounded-lg px-6 py-3 overflow-hidden group bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:from-indigo-600 hover:to-blue-700 transition duration-300"
-              >
-                <span className="absolute right-0 w-10 h-36 -mt-16 transition-all duration-1000 transform translate-x-14 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease-in-out"></span>
-                <span className="relative">Log Out</span>
-              </motion.button>
-            ) : (
-              <>
-                <NavLink to="/login" className="block w-full text-center text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-3 rounded-full font-semibold shadow-md hover:from-indigo-600 hover:to-blue-700 transition duration-300" onClick={closeMenu}>Login</NavLink>
-                <NavLink to="/register" className="block w-full text-center border-2 border-blue-600 text-blue-600 px-5 py-3 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition duration-300" onClick={closeMenu}>Register</NavLink>
-              </>
+            {!loading && (
+              user ? (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    handleLogOut();
+                    closeMenu();
+                  }}
+                  className="w-full text-center cursor-pointer relative rounded-lg px-6 py-3 overflow-hidden group bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:from-indigo-600 hover:to-blue-700 transition duration-300"
+                >
+                  <span className="absolute right-0 w-10 h-36 -mt-16 transition-all duration-1000 transform translate-x-14 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease-in-out"></span>
+                  <span className="relative">Log Out</span>
+                </motion.button>
+              ) : (
+                <>
+                  <NavLink to="/login" onClick={closeMenu} className="block w-full text-center text-white bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-3 rounded-full font-semibold shadow-md hover:from-indigo-600 hover:to-blue-700 transition duration-300">Login</NavLink>
+                  <NavLink to="/register" onClick={closeMenu} className="block w-full text-center border-2 border-blue-600 text-blue-600 px-5 py-3 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition duration-300">Register</NavLink>
+                </>
+              )
             )}
           </motion.div>
         )}
