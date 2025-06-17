@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaArrowUp } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2';
 
 const socialIcons = [
     { icon: <FaFacebookF />, url: 'https://facebook.com' },
@@ -19,8 +20,18 @@ const Footer = () => {
 
     const handleSubscribe = (e) => {
         e.preventDefault();
-        alert(`Subscribed with ${email}`);
-        setEmail('');
+
+        if (email) {
+            Swal.fire({
+                title: 'Subscribed!',
+                text: `You've been subscribed with ${email}`,
+                icon: 'success',
+                confirmButtonColor: '#6366f1',
+                background: '#1f2937',
+                color: '#fff',
+            });
+            setEmail('');
+        }
     };
 
     return (
@@ -59,7 +70,7 @@ const Footer = () => {
                     <ul className="space-y-2 text-sm">
                         <li><Link to="/" className="hover:text-white transition duration-300">Home</Link></li>
                         <li><Link to="/courses" className="hover:text-white transition duration-300">Courses</Link></li>
-                        <li><Link to="/about" className="hover:text-white transition duration-300">About Us</Link></li>
+                        <li><Link to="" className="hover:text-white transition duration-300">About Us</Link></li>
                     </ul>
                 </motion.div>
 
@@ -67,9 +78,9 @@ const Footer = () => {
                 <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                     <h3 className="text-lg font-semibold text-white mb-4">Support</h3>
                     <ul className="space-y-2 text-sm">
-                        <li><Link to="/contact" className="hover:text-white transition duration-300">Contact</Link></li>
-                        <li><Link to="/faq" className="hover:text-white transition duration-300">FAQ</Link></li>
-                        <li><Link to="/privacy" className="hover:text-white transition duration-300">Privacy Policy</Link></li>
+                        <li><Link to="" className="hover:text-white transition duration-300">Contact</Link></li>
+                        <li><Link to="" className="hover:text-white transition duration-300">FAQ</Link></li>
+                        <li><Link to="" className="hover:text-white transition duration-300">Privacy Policy</Link></li>
                     </ul>
                 </motion.div>
 

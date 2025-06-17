@@ -13,6 +13,7 @@ import MyEnrolledCoursesPage from "../Pages/MyEnrolledCoursesPage";
 import CourseDetails from "../Pages/HomeThings/CourseDetails";
 import Lottie from "lottie-react";
 import loaderAnimation from "../assets/loading.json";
+import TermsAndConditions from "../Pages/TermsAndConditions";
 
 const router = createBrowserRouter([
     {
@@ -73,6 +74,12 @@ const router = createBrowserRouter([
                     <PrivetRouts>
                         <MyEnrolledCoursesPage />
                     </PrivetRouts>
+                ),
+            },
+            {
+                path: "/terms-conditions",
+                element: (
+                    <TermsAndConditions></TermsAndConditions>
                 ),
             },
             {
