@@ -7,10 +7,14 @@ import TitleManager from '../Route/TitleManager';
 const RootLayout = () => {
     return (
         <>
-            <TitleManager /> {/* ⬅️ Add here */}
-            <div>
+            <TitleManager />
+            <div className='bg-gray-100'>
                 <Navbar />
-                <Outlet />
+                <div className='min-h-[calc(100vh-116px)]'>
+                    <div>
+                        <Outlet />
+                    </div>
+                </div>
                 <Footer />
             </div>
         </>

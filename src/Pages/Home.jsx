@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { Link, useLoaderData } from "react-router";
-import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import Lottie from "lottie-react";
 import education from "../assets/education.json";
 import feedback from "../assets/feedback.json";
@@ -10,25 +8,20 @@ import Banner from "./HomeThings/Banner";
 import CourseBox from "./HomeThings/CourseBox";
 import PopularCourse from "./HomeThings/PopularCourse";
 
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 const Home = () => {
     const coursesData = useLoaderData();
-    const controls = useAnimation();
-    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
+    // Initialize AOS once on mount
     useEffect(() => {
-        if (inView) {
-            controls.start("visible");
-        }
-    }, [controls, inView]);
-
-    const fadeInUp = {
-        hidden: { opacity: 0, y: 30 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.6, ease: "easeOut" },
-        },
-    };
+        AOS.init({
+            duration: 800,
+            once: false,
+            easing: "ease-in-out",
+        });
+    }, []);
 
     return (
         <div>
@@ -37,15 +30,9 @@ const Home = () => {
                 <Banner />
             </div>
 
-            {/* Course Section */}
-            <section className="bg-gray-50 mt-28 py-10">
-                <motion.div
-                    ref={ref}
-                    variants={fadeInUp}
-                    initial="hidden"
-                    animate={controls}
-                    className="max-w-7xl mx-auto px-4 text-center"
-                >
+            {/* Course Section (first) */}
+            <section className="bg-gray-100 mt-28 py-10">
+                <div className="max-w-7xl mx-auto px-4 text-center">
                     <div className="flex justify-center items-center gap-3 mb-3">
                         <Lottie animationData={education} className="h-16 w-16" loop={true} />
                         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
@@ -56,7 +43,7 @@ const Home = () => {
                     <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto mb-8">
                         Choose from a wide range of expert-led courses to level up your skills in marketing, SEO, and digital strategy.
                     </p>
-                </motion.div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
                     {coursesData.slice(0, 6).map((courseData) => (
@@ -65,28 +52,32 @@ const Home = () => {
                 </div>
 
                 <div className="mt-10 text-center">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Link
-                            to="/courses"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 ease-in-out"
+                    <Link
+                        to="/courses"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 ease-in-out"
+                        data-aos="zoom-in"
+                        data-aos-delay="100"
+                    >
+                        View More Courses
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
                         >
-                            View More Courses
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </Link>
-                    </motion.div>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </Link>
                 </div>
             </section>
 
             {/* students opinion */}
-            <section className="bg-gradient-to-b from-white to-blue-50 py-20">
+            <section
+                className="bg-gray-100 py-20"
+                data-aos="fade-up"
+                data-aos-delay="200"
+            >
                 <div className="max-w-7xl mx-auto px-4 text-center">
                     <div className="flex justify-center mb-6">
                         <Lottie animationData={feedback} className="h-40 w-40" loop={true} />
@@ -115,6 +106,8 @@ const Home = () => {
                             <div
                                 key={idx}
                                 className="bg-white border border-gray-200 p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300"
+                                data-aos="fade-up"
+                                data-aos-delay={100 + idx * 200}
                             >
                                 <div className="flex flex-col items-center">
                                     <img
@@ -131,14 +124,17 @@ const Home = () => {
                 </div>
             </section>
 
-
             {/* Popular Courses Section */}
-            <section>
-                <PopularCourse></PopularCourse>
+            <section data-aos="fade-right" data-aos-delay="200">
+                <PopularCourse />
             </section>
 
             {/* our services */}
-            <section className="bg-gray-100 py-16">
+            <section
+                className="bg-gray-100 py-16"
+                data-aos="fade-left"
+                data-aos-delay="200"
+            >
                 <div className="max-w-7xl mx-auto px-4 text-center">
                     <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-10">Our Services</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -162,6 +158,8 @@ const Home = () => {
                             <div
                                 key={index}
                                 className="bg-white p-6 rounded-xl shadow hover:shadow-md transition"
+                                data-aos="zoom-in"
+                                data-aos-delay={100 + index * 150}
                             >
                                 <div className="text-4xl mb-4">{service.icon}</div>
                                 <h3 className="text-xl font-semibold text-gray-800 mb-2">{service.title}</h3>
@@ -173,7 +171,11 @@ const Home = () => {
             </section>
 
             {/* FAQ Section */}
-            <section className="bg-white py-20 border-t border-gray-200">
+            <section
+                className="bg-gray-100 py-20 border-t border-gray-200"
+                data-aos="fade-up"
+                data-aos-delay="200"
+            >
                 <div className="max-w-6xl mx-auto px-4">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
@@ -202,7 +204,12 @@ const Home = () => {
                                 answer: "Yes, our courses are self-paced, allowing you to learn anytime, anywhere at your convenience.",
                             },
                         ].map((faq, index) => (
-                            <div key={index} className="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md transition">
+                            <div
+                                key={index}
+                                className="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md transition"
+                                data-aos="fade-up"
+                                data-aos-delay={100 + index * 150}
+                            >
                                 <h4 className="text-lg font-semibold text-indigo-600 mb-2">{faq.question}</h4>
                                 <p className="text-gray-700 text-sm">{faq.answer}</p>
                             </div>
@@ -210,9 +217,6 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-
-
-
         </div>
     );
 };

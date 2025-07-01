@@ -88,8 +88,8 @@ export default function AddCourseForm() {
     ];
 
     return (
-        <div className="bg-gradient-to-br from-purple-200 via-indigo-100 to-pink-100 py-20 px-4 sm:px-6 relative overflow-hidden">
-            <div className="absolute -top-40 -left-20 w-[600px] h-[600px] bg-pink-300 rounded-full opacity-30 filter blur-3xl z-0 animate-pulse" />
+        <div className="py-20 px-4 sm:px-6 relative overflow-hidden">
+            <div className="absolute -top-40 -left-20 w-[600px] h-[600px] rounded-full opacity-30 filter blur-3xl z-0 animate-pulse" />
             <div className="absolute -bottom-40 -right-20 w-[600px] h-[600px] bg-indigo-300 rounded-full opacity-30 filter blur-3xl z-0 animate-pulse" />
 
             <motion.form

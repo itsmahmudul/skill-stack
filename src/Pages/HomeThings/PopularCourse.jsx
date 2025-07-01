@@ -30,7 +30,7 @@ const PopularCourse = () => {
     }
 
     return (
-        <section className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20 overflow-hidden">
+        <section className="relative bg-gray-100 py-20 overflow-hidden">
             <div className="absolute -top-20 -left-20 w-72 h-72 bg-blue-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
             <div className="absolute -bottom-24 -right-20 w-72 h-72 bg-purple-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
 

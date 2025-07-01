@@ -55,7 +55,7 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-200 via-indigo-100 to-purple-200">
+        <div className="min-h-screen flex items-center justify-center px-4">
             <div className="flex w-full max-w-5xl shadow-2xl border border-blue-300 rounded-2xl overflow-hidden bg-white text-gray-800">
                 {/* Left side (Lottie + Branding) */}
                 <div className="w-1/2 hidden md:flex flex-col items-center justify-center p-8 bg-gradient-to-br from-blue-100 to-blue-200">
