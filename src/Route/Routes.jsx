@@ -14,6 +14,9 @@ import CourseDetails from "../Pages/HomeThings/CourseDetails";
 import Lottie from "lottie-react";
 import loaderAnimation from "../assets/loading.json";
 import TermsAndConditions from "../Pages/TermsAndConditions";
+import DashboardLayout from "../Layouts/DashboardLayout";
+import Overview from "../Pages/Dashboard/Overview";
+import Profile from "../Pages/Dashboard/Profile";
 
 const router = createBrowserRouter([
     {
@@ -92,6 +95,22 @@ const router = createBrowserRouter([
             },
         ],
     },
+    {
+        path : "/dashboard",
+        element : (<PrivetRouts>
+            <DashboardLayout></DashboardLayout>
+        </PrivetRouts>),
+        children: [
+            {
+                index: true,
+                element: <Overview></Overview>
+            },
+            {
+                path: "profile",
+                element: <Profile></Profile>
+            }
+        ]
+    }
 ]);
 
 export default router;

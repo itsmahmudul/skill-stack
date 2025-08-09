@@ -27,7 +27,7 @@ export default function AddCourseForm() {
         level: "",
         requirements: "",
         learnings: "",
-        totalSeats: "", // ✅ Added
+        totalSeats: "", 
     });
 
     const handleChange = (e) => {

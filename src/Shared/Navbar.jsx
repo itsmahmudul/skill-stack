@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, NavLink } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,10 +23,24 @@ const mobileMenuVariants = {
   },
 };
 
+const profileMenuVariants = {
+  hidden: { opacity: 0, y: -10, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.2, ease: "easeOut" },
+  },
+  exit: { opacity: 0, y: -10, scale: 0.95, transition: { duration: 0.15 } },
+};
+
 const Navbar = () => {
   const { logOutUser, user, loading } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const profileRef = useRef(null);
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const closeMenu = () => setIsOpen(false);
@@ -37,6 +51,16 @@ const Navbar = () => {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogOut = () => {
@@ -52,11 +76,13 @@ const Navbar = () => {
 
   const activeClass = `relative font-semibold after:absolute after:-bottom-1 after:left-0
     after:h-[2.5px] after:w-full after:rounded-lg after:bg-gradient-to-r after:from-blue-400
-    after:to-indigo-600 after:transition-all after:duration-300 ${scrolled ? "text-blue-600" : "text-blue-700"
+    after:to-indigo-600 after:transition-all after:duration-300 ${
+      scrolled ? "text-blue-600" : "text-blue-700"
     } transition-colors duration-500 ease-in-out`;
 
-  const inactiveClass = `font-semibold transition-colors duration-500 ease-in-out ${scrolled ? "text-gray-700 hover:text-blue-600" : "text-gray-700 hover:text-blue-600"
-    }`;
+  const inactiveClass = `font-semibold transition-colors duration-500 ease-in-out ${
+    scrolled ? "text-gray-700 hover:text-blue-600" : "text-gray-700 hover:text-blue-600"
+  }`;
 
   return (
     <nav
@@ -65,6 +91,7 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
         <div className="flex justify-between items-center h-16">
+          {/* Logo */}
           <div className="flex-shrink-0 flex items-center cursor-pointer space-x-3">
             <Link to="/" className="flex items-center space-x-2 select-none">
               <motion.img
@@ -93,13 +120,15 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Auth Buttons (Desktop) */}
+          {/* Desktop Auth Section */}
           <div className="hidden lg:flex items-center space-x-2">
             {!loading && (
               user ? (
-                <>
+                <div className="relative" ref={profileRef}>
+                  {/* Profile Avatar */}
                   <motion.div
-                    whileHover={{ scale: 1.15, boxShadow: "0 0 10px rgba(59, 130, 246, 0.6)" }}
+                    whileHover={{ scale: 1.15 }}
+                    onClick={() => setIsProfileOpen((prev) => !prev)}
                     className="w-11 h-11 rounded-full ring-2 ring-blue-500 overflow-hidden cursor-pointer"
                     title={user.displayName || "User"}
                   >
@@ -109,16 +138,37 @@ const Navbar = () => {
                       className="w-full h-full object-cover rounded-full"
                     />
                   </motion.div>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleLogOut}
-                    className="relative cursor-pointer rounded-lg px-6 py-2.5 overflow-hidden group font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700"
-                  >
-                    <span className="absolute right-0 w-10 h-36 -mt-16 transition-all duration-1000 transform translate-x-14 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease-in-out"></span>
-                    <span className="relative">Log Out</span>
-                  </motion.button>
-                </>
+
+                  {/* Dropdown */}
+                  <AnimatePresence>
+                    {isProfileOpen && (
+                      <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        variants={profileMenuVariants}
+                        className="absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50"
+                      >
+                        <Link
+                          to="/dashboard"
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          Dashboard
+                        </Link>
+                        <button
+                          onClick={() => {
+                            handleLogOut();
+                            setIsProfileOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                        >
+                          Log Out
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <>
                   <NavLink to="/login" className="px-6 py-2 rounded-full font-semibold shadow-lg transition duration-300 bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-700">Login</NavLink>
@@ -156,9 +206,8 @@ const Navbar = () => {
             {!loading && user && (
               <div className="flex items-center space-x-4 mb-2">
                 <motion.div
-                  whileHover={{ scale: 1.1, boxShadow: "0 0 10px rgba(59, 130, 246, 0.6)" }}
+                  whileHover={{ scale: 1.1 }}
                   className="w-12 h-12 rounded-full ring-2 ring-blue-500 overflow-hidden cursor-pointer"
-                  title={user.displayName || "User"}
                 >
                   <img
                     src={user.photoURL || "/default-avatar.png"}
@@ -177,6 +226,7 @@ const Navbar = () => {
               <>
                 <NavLink to="/manageCourses" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">Manage Courses</NavLink>
                 <NavLink to="/my-enrolled-courses" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">My Enrolled Courses</NavLink>
+                <NavLink to="/dashboard" onClick={closeMenu} className="block font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-300">Dashboard</NavLink>
               </>
             )}
             <hr className="border-gray-300" />
