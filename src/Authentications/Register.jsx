@@ -4,6 +4,7 @@ import AuthContext from "../Context/AuthContext";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import axiosInstance from "../Lib/axios";
 
 const inputVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -55,16 +56,25 @@ const Register = () => {
 
         const validationError = validatePassword(password, confirmPassword, email);
         if (validationError) return toast.error(validationError);
-        if (!acceptedTerms)
-            return toast.error("You must accept the terms and conditions.");
+        if (!acceptedTerms) return toast.error("You must accept the terms and conditions.");
 
         try {
+            // 1. Create user in Firebase Auth
             await createUser(email, password);
             await updateUserProfile({ displayName: name, photoURL });
+
+            // 2. Send user info to your backend to save in DB
+            await axiosInstance.post("/register", {
+                name,
+                email,
+                acceptedTerms,
+                photoURL
+            });
+
             toast.success("User registered successfully!");
             setTimeout(() => navigate(from, { replace: true }), 1500);
         } catch (err) {
-            toast.error(err.message);
+            toast.error(err.response?.data?.message || err.message);
         }
     };
 
